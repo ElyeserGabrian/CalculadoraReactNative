@@ -1,10 +1,23 @@
 import { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { TextInput } from "react-native";
-import { Button } from "react-native-web";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput} from "react-native";
 
 
 export default function TelaPrincipal() {
+    
+    function Botao({ title, onPress, tipo }) {
+      let estilo = [styles.botao];
+    
+      if (tipo === "numero") estilo.push(styles.botaoNumero);
+      if (tipo === "operador") estilo.push(styles.botaoOperador);
+      if (tipo === "igual") estilo.push(styles.botaoIgual);
+      if (tipo === "clear") estilo.push(styles.botaoClear);
+    
+      return (
+        <TouchableOpacity style={estilo} onPress={onPress}>
+          <Text style={styles.textoBotao}>{title}</Text>
+        </TouchableOpacity>
+      );
+    }
 
     const [txt, setTxt] = useState("");
     const [numeroAtual, setNumeroAtual] = useState("")
@@ -31,6 +44,14 @@ export default function TelaPrincipal() {
                     if (num === "="){
                         calcular();
                     } else {
+                        let qtdNums = listaNum.length;
+
+                        if (numeroAtual !== "") {
+                        qtdNums += 1;
+                        }
+
+                        if (qtdNums === 0 || qtdNums <= listaOp.length) return;
+
                         setListaOp(prev => [...prev, num])
                         setTxt(prev => prev + num)
                     }
@@ -85,75 +106,106 @@ export default function TelaPrincipal() {
 
 
        return(
-        <View>
+        <View style={styles.container}>
             <TextInput 
                 multiline={true} 
                 numberOfLines={4}
                 value={txt}
-                onChangeText={setTxt}
+                onChangeText={(texto) => {
+                    setTxt(texto);
+
+                    if (texto == ""){
+                        setTxt("")
+                        setListaNum([])
+                        setListaOp([])
+                        setNumeroAtual("")
+                    }
+                }}
                 placeholder="Digite algo ..."
                 style={styles.txtArea}
              />
-            <View style={styles.botoes}>
-                <Button
+            <View style={styles.grid}>
+                <Botao
                     title="7"
+                    tipo="numero"
                     onPress={() => concatVal("7")}
                 />
-                <Button
+                <Botao
                     title="8"
+                    tipo="numero"
                     onPress={() => concatVal("8")}
                 />
-                <Button
+                <Botao
                     title="9"
+                    tipo="numero"
                     onPress={() => concatVal("9")}
                 />
-                <Button
-                    title="4"
-                    onPress={() => concatVal("4")}
-                />
-                <Button
-                    title="5"
-                    onPress={() => concatVal("5")}
-                />
-                <Button
-                    title="6"
-                    onPress={() => concatVal("6")}
-                />
-                <Button
-                    title="1"
-                    onPress={() => concatVal("1")}
-                />
-                <Button
-                    title="2"
-                    onPress={() => concatVal("2")}
-                />
-                <Button
-                    title="3"
-                    onPress={() => concatVal("3")}
-                />
-                <Button
-                    title="+"
-                    onPress={() => concatVal("+")}
-                />
-                <Button
-                    title="-"
-                    onPress={() => concatVal("-")}
-                />
-                <Button
+                <Botao
                     title="/"
+                    tipo="operador"
                     onPress={() => concatVal("/")}
                 />
-                <Button
+
+                <Botao
+                    title="4"
+                    tipo="numero"
+                    onPress={() => concatVal("4")}
+                />
+                <Botao
+                    title="5"
+                    tipo="numero"
+                    onPress={() => concatVal("5")}
+                />
+                <Botao
+                    title="6"
+                    tipo="numero"
+                    onPress={() => concatVal("6")}
+                />
+                <Botao
                     title="x"
+                    tipo="operador"
                     onPress={() => concatVal("x")}
                 />
-                <Button
+                <Botao
+                    title="1"
+                    tipo="numero"
+                    onPress={() => concatVal("1")}
+                />
+                <Botao
+                    title="2"
+                    tipo="numero"
+                    onPress={() => concatVal("2")}
+                />
+                <Botao
+                    title="3"
+                    tipo="numero"
+                    onPress={() => concatVal("3")}
+                />
+                <Botao
+                    title="-"
+                    tipo="operador"
+                    onPress={() => concatVal("-")}
+                />
+
+                <Botao
+                    title="0"
+                    tipo="numero"
+                    onPress={() => concatVal("0")}
+                />
+                <Botao
                     title="C"
+                    tipo="clear"
                     onPress={() => concatVal("C")}
                 />
-                <Button
+                <Botao
                     title="="
+                    tipo="igual"
                     onPress={() => concatVal("=")}
+                />
+                <Botao
+                    title="+"
+                    tipo="operador"
+                    onPress={() => concatVal("+")}
                 />
 
             </View>
@@ -162,8 +214,57 @@ export default function TelaPrincipal() {
 }
 
 const styles = StyleSheet.create({
-    txtArea:{
-        width: "100%",
-        height: "20%"
-    }
-})
+  container: {
+    flex: 1,
+    backgroundColor: "#1e1e1e",
+    justifyContent: "flex-end",
+    padding: 10,
+  },
+
+  txtArea: {
+    backgroundColor: "rgb(218, 252, 253)",
+    color: "rgb(0, 0, 0)",
+    fontSize: 32,
+    padding: 20,
+    borderRadius: 10,
+    marginBottom: 15,
+    textAlign: "right",
+  },
+
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+
+  botao: {
+    width: "22%",
+    height: 70,
+    marginBottom: 10,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  textoBotao: {
+    color: "#fff",
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+
+  botaoNumero: {
+    backgroundColor: "#333",
+  },
+
+  botaoOperador: {
+    backgroundColor: "#ff9500",
+  },
+
+  botaoIgual: {
+    backgroundColor: "#34c759",
+  },
+
+  botaoClear: {
+    backgroundColor: "#ff3b30",
+  },
+});
